@@ -10,6 +10,10 @@ var io = require("socket.io")(server);
 app.use(express.json());
 var clients = {};
 
+app.route("/check").get((req,res)=>{
+  res.json({message:"App is working fine"});
+})
+
 
 io.on("connection", (socket) => {
   console.log("connetetd");
@@ -39,6 +43,12 @@ io.on("connection", (socket) => {
     }
 
    // socket.emit("res",`Connection stable : active count ${mess}`)
+  })
+
+  socket.on("communicate",(data)=>{
+    console.log(data);
+    clients[data.email].desktop.emit("res",  `Received Message ${data.counter}`);
+    clients[data.email].mobile.emit("res", `Message Sent for count = ${data.counter}`);
   })
 
   socket.on("signin", (user) => {

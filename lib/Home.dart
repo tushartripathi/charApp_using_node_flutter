@@ -28,16 +28,22 @@ class _HomeState extends State<Home> {
           Column(
             children: [
               ElevatedButton(
-                  onPressed: () {
-                    Map<String, dynamic> sendMessage = {
-                      "email": "tushar@example.com",
-                      "mobile": "1",
-                      "desktop": "0"
-                    };
-                    print("Connect Mobile");
-                    connectDevie(socket, sendMessage);
-                  },
-                  child: Text("Connect Mobile")),
+                onPressed: () {
+                  Map<String, dynamic> sendMessage = {
+                    "email": "tushar@example.com",
+                    "mobile": "1",
+                    "desktop": "0"
+                  };
+                  print("Connect Mobile");
+                  connectDevie(socket, sendMessage);
+                },
+                child: Text("Connect Mobile"),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.green,
+                  onPrimary: Colors.black,
+                  elevation: 8,
+                ),
+              ),
               ElevatedButton(
                   onPressed: () {
                     Map<String, dynamic> sendMessage = {
@@ -76,6 +82,11 @@ class _HomeState extends State<Home> {
                     print("Sending message from mobile");
                     sendValue(socket, sendMessage);
                   },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green,
+                    onPrimary: Colors.black,
+                    elevation: 8,
+                  ),
                   child: Text("Mobile message send ")),
               SizedBox(
                 height: 20,
@@ -95,6 +106,25 @@ class _HomeState extends State<Home> {
                   child: Text("Desktop message send "))
             ],
           ),
+          SizedBox(
+            height: 50,
+          ),
+          Column(
+            children: [
+              ElevatedButton(
+                onPressed: (() {
+                  print("Connect Mobile");
+                  longCommunication(socket);
+                }),
+                child: Text("create long communication"),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.green,
+                  onPrimary: Colors.black,
+                  elevation: 8,
+                ),
+              ),
+            ],
+          )
         ],
       ),
     );
@@ -124,17 +154,8 @@ class _HomeState extends State<Home> {
     socket.onConnect((data) => {print("Connected to server")});
     int i = 1;
 
-    Timer.periodic(Duration(seconds: 2), (timer) {
-      if (i >= 3) {
-        timer.cancel();
-      } else {
-        // code to execute in each iteration
-        //sendValue(socket, i);
-        i++;
-      }
-    });
-
     socket.on("res", (data) => {dislayData(data)});
+    socket.on("acknow", (data) => {dislayData(data)});
   }
 
   sendValue(IO.Socket socket, Map<String, dynamic> data) {
@@ -143,5 +164,25 @@ class _HomeState extends State<Home> {
 
   connectDevie(IO.Socket socket, Map<String, dynamic> data) {
     socket.emit("signin", data);
+  }
+
+  longCommunication(IO.Socket socket) {
+    int i = 0;
+    Map<String, dynamic> sendMessage = {
+      "email": "tushar@example.com",
+      "mobile": "1",
+      "desktop": "0",
+      "counter": i.toString()
+    };
+    Timer.periodic(Duration(seconds: 4), (timer) {
+      if (i >= 10) {
+        timer.cancel();
+      } else {
+        // code to execute in each iteration
+        sendMessage["counter"] = i.toString();
+        socket.emit("communicate", sendMessage);
+        i++;
+      }
+    });
   }
 }
