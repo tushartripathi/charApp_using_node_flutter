@@ -74,12 +74,14 @@ class _HomeState extends State<Home> {
               ElevatedButton(
                   onPressed: () {
                     print("Creating message from mobile");
+
                     Map<String, dynamic> sendMessage = {
                       "email": "tushar@example.com",
                       "message": _controller.text,
                       "mobile": "1",
                       "desktop": "0"
                     };
+                    print("Creating Log mode");
                     print("Sending message from mobile");
                     sendValue(socket, sendMessage);
                   },
