@@ -34,6 +34,7 @@ class _HomeState extends State<Home> {
                     "mobile": "1",
                     "desktop": "0"
                   };
+
                   print("Connect Mobile");
                   connectDevie(socket, sendMessage);
                 },
